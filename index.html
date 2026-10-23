@@ -6,8 +6,8 @@
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="Траты — сколько у меня денег">
-  <meta name="theme-color" content="#07080F">
-  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0D1015">
+  <meta name="color-scheme" content="dark light">
 
   <!-- «Добавить на главный экран»: открывается как приложение, без адресной строки -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -23,19 +23,29 @@
   <!-- Пока грузится приложение — тёмный экран с пульсирующим кольцом,
        а не белая вспышка. -->
   <style>
-    html, body { margin: 0; height: 100%; background: #07080F; }
+    html, body { margin: 0; height: 100%; background: #0D1015; }
     #boot {
       position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
       background:
-        radial-gradient(60vmax 60vmax at 10% 5%, rgba(108,75,255,.35), transparent 60%),
-        radial-gradient(60vmax 60vmax at 95% 95%, rgba(0,194,168,.30), transparent 60%),
-        #07080F;
+        radial-gradient(60vmax 60vmax at 10% 5%, rgba(42,61,92,.55), transparent 60%),
+        radial-gradient(60vmax 60vmax at 95% 95%, rgba(30,74,74,.5), transparent 60%),
+        #0D1015;
       transition: opacity .35s ease;
     }
     #boot i {
       width: 56px; height: 56px; border-radius: 50%;
       border: 7px solid rgba(255,255,255,.9);
       animation: pulse 1.2s ease-in-out infinite;
+    }
+    @media (prefers-color-scheme: light) {
+      html, body { background: #EDF0F4; }
+      #boot {
+        background:
+          radial-gradient(60vmax 60vmax at 10% 5%, rgba(195,211,236,.9), transparent 60%),
+          radial-gradient(60vmax 60vmax at 95% 95%, rgba(207,230,224,.9), transparent 60%),
+          #EDF0F4;
+      }
+      #boot i { border-color: rgba(17,24,39,.75); }
     }
     @keyframes pulse { 0%,100% { transform: scale(.85); opacity: .55 } 50% { transform: scale(1); opacity: 1 } }
   </style>
