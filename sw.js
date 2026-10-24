@@ -46,7 +46,7 @@ self.addEventListener('install', (event) => {
       // что уже лежит в памяти — не качаем заново; по одному, чтобы
       // отсутствие какого-то файла не мешало сохранить остальные
       await Promise.all(CORE.map(async (p) => {
-        if (!(await cache.match(p))) await cache.add(p).catch(() => {});
+        if (!(await cache.match(p))) await cache.add(new Request(p, { cache: 'no-cache' })).catch(() => {});
       }));
       await self.skipWaiting();
     })(),
@@ -76,7 +76,9 @@ self.addEventListener('fetch', (event) => {
 
 async function fromMemory(event, req) {
   const cache = await caches.open(CACHE);
-  const fresh = fetch(req).then((res) => {
+  // no-cache: сверяемся с сайтом (быстрый ответ «не изменилось»), а не
+  // берём из кэша браузера — иначе обновление запаздывало бы на 10 минут
+  const fresh = fetch(req, { cache: 'no-cache' }).then((res) => {
     if (res && (res.ok || res.type === 'opaque')) {
       return cache.put(req, res.clone()).then(() => res, () => res);
     }
