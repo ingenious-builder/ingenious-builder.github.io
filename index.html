@@ -61,6 +61,14 @@
       setTimeout(function () { b.remove(); }, 400);
     });
   </script>
+  <script>
+    // Сайт в памяти телефона — открывается и без интернета (см. sw.js).
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('sw.js').catch(function () {});
+      });
+    }
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

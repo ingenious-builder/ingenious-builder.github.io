@@ -33,10 +33,11 @@ addEventListener("message", eventListener);
 if (!window._flutter) {
   window._flutter = {};
 }
-_flutter.buildConfig = {"engineRevision":"69c8c61792f04cc809dfef0c910414fb9afc06cd","builds":[{"compileTarget":"dart2js","renderer":"canvaskit","mainJsPath":"main.dart.js"},{}]};
+_flutter.buildConfig = {"engineRevision":"69c8c61792f04cc809dfef0c910414fb9afc06cd","builds":[{"compileTarget":"dart2js","renderer":"canvaskit","mainJsPath":"main.dart.js"},{}],"useLocalCanvasKit":true};
 
-_flutter.loader.load({
-  serviceWorkerSettings: {
-    serviceWorkerVersion: "73301918" /* Flutter's service worker is deprecated and will be removed in a future Flutter release. */
-  }
-});
+
+// Запуск без служебного файла Flutter. Тот при каждом открытии
+// регистрировался, тут же снимал себя и перезагружал страницу —
+// лишняя перезагрузка и белый экран (то же было в «Зеркале»).
+// Сохранение сайта для работы без интернета делает наш sw.js.
+_flutter.loader.load();
