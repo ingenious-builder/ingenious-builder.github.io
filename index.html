@@ -83,6 +83,60 @@
     })();
   </script>
   <script>
+    // Обновления. Телефон почти не перезапускает приложение, а разворачивает
+    // из памяти — и новая версия не подхватывалась. Поэтому при открытии и
+    // при каждом возвращении в приложение сверяем отметку версии с сайтом;
+    // если вышла новая — тихо скачиваем её, а перезапускаемся в следующий
+    // раз, когда возвращаешься в приложение (а не посреди ввода).
+    (function () {
+      var BUILD = 'ec02da264503'; // подставляется при выкладке (tool/deploy.sh)
+      if (BUILD.indexOf('%%') === 0 || !('serviceWorker' in navigator)) return;
+      var ready = false, busy = false;
+      function refresh() {
+        return new Promise(function (done) {
+          var sw = navigator.serviceWorker.controller;
+          if (!sw) return done(false);
+          var timer = setTimeout(function () { done(false); }, 60000);
+          navigator.serviceWorker.addEventListener('message', function on(e) {
+            if (e.data !== 'refreshed' && e.data !== 'refresh-failed') return;
+            navigator.serviceWorker.removeEventListener('message', on);
+            clearTimeout(timer);
+            done(e.data === 'refreshed');
+          });
+          sw.postMessage('refresh');
+        });
+      }
+      async function check() {
+        if (busy || ready) return;
+        busy = true;
+        try {
+          var r = await fetch('build.txt?t=' + Date.now(), { cache: 'no-store' });
+          var now = r.ok ? (await r.text()).trim() : '';
+          if (now && now !== BUILD) ready = await refresh();
+        } catch (e) {
+          // нет сети — проверим в следующий раз
+        } finally {
+          busy = false;
+        }
+      }
+      function apply() {
+        // не чаще раза в две минуты — на случай, если сайт ещё не везде обновился
+        try {
+          var last = Number(sessionStorage.getItem('tratyUpdate') || 0);
+          if (Date.now() - last < 120000) return false;
+          sessionStorage.setItem('tratyUpdate', String(Date.now()));
+        } catch (e) {}
+        location.reload();
+        return true;
+      }
+      document.addEventListener('visibilitychange', function () {
+        if (document.visibilityState !== 'visible') return;
+        if (!(ready && apply())) check();
+      });
+      window.addEventListener('load', function () { setTimeout(check, 4000); });
+    })();
+  </script>
+  <script>
     // Сайт в памяти телефона — открывается и без интернета (см. sw.js).
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {
