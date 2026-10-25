@@ -62,6 +62,27 @@
     });
   </script>
   <script>
+    // iPhone: когда выезжает клавиатура, Safari сдвигает всю страницу вверх,
+    // чтобы показать поле. Но приложение и так поднимает шторку над
+    // клавиатурой — выходил двойной сдвиг и серая полоса под шторкой.
+    // Страница у нас никогда не прокручивается, поэтому возвращаем её на место.
+    (function () {
+      function pin() {
+        if (window.scrollY || window.scrollX) window.scrollTo(0, 0);
+      }
+      window.addEventListener('scroll', pin, { passive: true });
+      var vv = window.visualViewport;
+      if (vv) {
+        vv.addEventListener('scroll', pin);
+        vv.addEventListener('resize', function () {
+          // клавиатура выезжает с анимацией — проверяем ещё полсекунды
+          var n = 0;
+          (function tick() { pin(); if (++n < 30) requestAnimationFrame(tick); })();
+        });
+      }
+    })();
+  </script>
+  <script>
     // Сайт в памяти телефона — открывается и без интернета (см. sw.js).
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {
