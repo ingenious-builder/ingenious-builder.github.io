@@ -89,7 +89,7 @@
     // если вышла новая — тихо скачиваем её, а перезапускаемся в следующий
     // раз, когда возвращаешься в приложение (а не посреди ввода).
     (function () {
-      var BUILD = '37fcb0821c9f'; // подставляется при выкладке (tool/deploy.sh)
+      var BUILD = '66ad56590202'; // подставляется при выкладке (tool/deploy.sh)
       if (BUILD.indexOf('%%') === 0 || !('serviceWorker' in navigator)) return;
       var ready = false, busy = false;
       function refresh() {
